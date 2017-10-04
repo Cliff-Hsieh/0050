@@ -1,5 +1,6 @@
 <?php
 include_once("DBController.php");
+include_once("mailController.php");
 
 class analyticsController{
     public function index(){
