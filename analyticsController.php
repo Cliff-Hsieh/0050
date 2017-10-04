@@ -49,5 +49,8 @@ class analyticsController{
    }
 }
 
-$analysis = new analyticsController;
-$analysis->index();
+$weekday = date("w", time());
+if( $weekday > 0 && $weekday < 6 ){
+    $analysis = new analyticsController;
+    $analysis->index();
+}

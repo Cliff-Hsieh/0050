@@ -39,5 +39,8 @@ class stockController {
     }
 }
 
-$stock = new stockController;
-$stock->index();
+$weekday = date("w", time());
+if( $weekday > 0 && $weekday < 6 ){
+    $stock = new stockController;
+    $stock->index();
+}
