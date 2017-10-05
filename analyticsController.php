@@ -9,6 +9,7 @@ class analyticsController{
         global $market;
         $data = $this->getDataDay(3);
         $this->checkKD($data, $msg);
+        $this->checkPassivation($data, $msg);
         $mail->sendMail($msg);
     }
 
@@ -46,6 +47,16 @@ class analyticsController{
    */
    public function checkMarket(){
 
+   }
+
+   //檢查鈍化
+   public function checkPassivation($data, &$msg){
+       if(($data[0]['k-value'] > 80) && ($data[1]['k-value'] > 80) && ($data[2]['k-value'] > 80)){
+           $msg[] = "目前高檔鈍化中，未來很有機會繼續漲";
+       }
+       if(($data[0]['k-value'] < 20) && ($data[1]['k-value'] < 20) && ($data[2]['k-value'] < 20)){
+           $msg[] = "目前低檔鈍化中，未來很有機會繼續跌";
+       }
    }
 }
 
