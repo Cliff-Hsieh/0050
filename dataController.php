@@ -16,7 +16,7 @@ class dataController{
         $low = $data['low'];
         $close = $data['close'];
         if( $tableName === 'taiex' ){
-            $sql = "INSERT IGNORE INTO `$tableName` (`date`, `highest`, `lowest`, `close`) VALUES ('$newDate', $high, $low, $close)";
+            $sql = "INSERT IGNORE INTO `$tableName` (`date`, `highest`, `lowest`, `close`) VALUES ('$newDate', '$high', '$low', '$close')";
         }else{
             $yesterdayKD = $this->getYesterdayKD();
             $max = $this->getHighestPrice();
@@ -27,7 +27,7 @@ class dataController{
             $k = round((($yesterdayKD['k'] * 2/3) + ($rsv * 1/3)), 1);
             $d = round((($yesterdayKD['d'] * 2/3) + ($k * 1/3)), 1);
 
-            $sql = "INSERT IGNORE INTO `$tableName` (`date`, `highest`, `lowest`, `close`, `k-value`, `d-value`) VALUES ('$newDate', $high, $low, $close, $k, $d)";
+            $sql = "INSERT IGNORE INTO `$tableName` (`date`, `highest`, `lowest`, `close`, `k-value`, `d-value`) VALUES ('$newDate', '$high', '$low', '$close', '$k', '$d')";
         }
         $conn->query($sql);
     }
