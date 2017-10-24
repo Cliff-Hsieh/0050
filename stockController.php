@@ -42,12 +42,12 @@ class stockController {
     }
 
     public function sortData($file, $fileName){
-        $sortData = array();
+        $sorted = array();
         $dataList = explode(PHP_EOL, $file);
         foreach($dataList as $data){
             $fields = str_getcsv($data);
             if(preg_match("/\d{3}\/\d{2}\/\d{2}/", $fields[0])){
-                if( $fileName == "taiex"){
+                if( $fileName === "taiex" ){
                     $date = $fields[0];
                     $high = $fields[2];
                     $low = $fields[3];
@@ -58,10 +58,10 @@ class stockController {
                     $low = $fields[5];
                     $close = $fields[6];
                 }
-                $sortData[] = array("date"=>$date, "high"=>$high, "low"=>$low, "close"=>$close);
+                $sorted[] = array("date"=>$date, "high"=>$high, "low"=>$low, "close"=>$close);
             }
         }
-        return $sortData;
+        return $sorted;
     }
 }
 
