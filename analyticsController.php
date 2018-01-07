@@ -12,6 +12,7 @@ class analyticsController{
         $this->market = "normal";
         $this->passivation = false;
         $this->kUpperBound = 80;
+        $this->kLowerBound = 20;
     }
 
     public function index(){
@@ -20,6 +21,8 @@ class analyticsController{
 
         $this->checkPassivation($data, $msg);
         $this->checkKD($data, $msg);
+	$taiex = $this->getTaiex();
+        $this->checkTaiex($taiex, $msg);
 
         $mail = new mailController;
         $mail->sendMail($msg);
@@ -30,6 +33,26 @@ class analyticsController{
         $conn = $DB->connect();
 
         $sql = "SELECT * FROM `0050` ORDER BY `date` DESC LIMIT $days";
+        $row = $conn->query($sql);
+        return mysqli_fetch_all($row, MYSQLI_ASSOC);
+    }
+
+    public function getTaiex(){
+        $DB = new DBController;
+        $conn = $DB->connect();
+        $sql = "SELECT count(*) FROM `taiex`";
+        $row = $conn->query($sql);
+        $total = mysqli_fetch_array($row)[0];
+        
+        $limit = 5;
+        if ($total > 20){
+          if($total > 60){
+            $limit = 60;
+          }else{
+            $limit = 20;
+          }
+        }
+        $sql = "SELECT * FROM `taiex` ORDER BY `date` DESC LIMIT $limit";
         $row = $conn->query($sql);
         return mysqli_fetch_all($row, MYSQLI_ASSOC);
     }
@@ -75,6 +98,36 @@ class analyticsController{
        if(($data[0]['k-value'] < 20) && ($data[1]['k-value'] < 20) && ($data[2]['k-value'] < 20)){
            $msg[] = "目前低檔鈍化中，未來很有機會繼續跌";
        }
+   }
+
+   public function checkTaiex($taiex, &$msg){
+      $msg[] = date("Y/m/d")."收盤價: ".$taiex[0]['close'];
+      if(count($taiex) > 5){
+        $this->getTaiexAvg(5, $taiex, $msg);
+      }
+      if(count($taiex) > 20){
+        $this->getTaiexAvg(20, $taiex, $msg);
+      }
+      if(count($taiex) >= 60){
+        $this->getTaiexAvg(60, $taiex, $msg);
+      }
+   }
+   
+   public function getTaiexAvg($num, $taiex, &$msg){
+     $str_array = array(5 => "週", 20 => "月", 60 => "季");
+     $total = 0;
+     $avg = 0;
+       for($i = 0; $i < $num; $i++){
+         $total += str_replace(',', '', $taiex[$i]['close']);
+     }
+     $avg = round(($total / $num), 2);
+     $close = str_replace(',', '', $taiex[0]['close']);
+
+     if($avg - $close > 0){
+       $msg[] = "MA$num: $avg, 收盤價在".$str_array[$num]."線底下，可參考買進";
+     }else{
+       $msg[] = "MA$num: $avg, 收盤價在".$str_array[$num]."線以上，可參考保守";
+     } 
    }
 }
 
