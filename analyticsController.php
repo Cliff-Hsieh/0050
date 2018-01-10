@@ -101,7 +101,7 @@ class analyticsController{
    }
 
    public function checkTaiex($taiex, &$msg){
-      $msg[] = date("Y/m/d")."收盤價: ".$taiex[0]['close'];
+      $msg[] = $taiex[0]['date']."收盤價: ".$taiex[0]['close'];
       if(count($taiex) > 5){
         $this->getTaiexAvg(5, $taiex, $msg);
       }
