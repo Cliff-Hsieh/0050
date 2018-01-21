@@ -60,8 +60,8 @@ class analyticsController{
     public function checkKD($data, &$msg){
         $today = $data[0];
         $yesterday = $data[1];
-        $kDiff = $today['k-value'] - $yesterday['k-value'];
-        $dDiff = $today['d-value'] - $yesterday['d-value'];
+        $kDiff = round($today['k-value'] - $yesterday['k-value'], 2);
+        $dDiff = round($today['d-value'] - $yesterday['d-value'], 2);
         $msg[] = "K: ".$today['k-value']."($kDiff) , D: ".$today['d-value']."($dDiff)";
 
         if(($this->passivation === false) && ($today['k-value'] > $this->kUpperBound)){
